@@ -29,9 +29,7 @@ window.addEventListener('resize', ()=>
 /**
  * Cursor
  */
-const cursor = {}
-cursor.x = 0
-cursor.y = 0
+const cursor = { x: 0, y: 0, down: false }
 
 window.addEventListener('mousemove', (_event) =>
 {
@@ -39,32 +37,73 @@ window.addEventListener('mousemove', (_event) =>
     cursor.y = _event.clientY / sizes.height - 0.5
 })
 
+window.addEventListener('mousedown', () =>
+{
+    cursor.down = true
+})
+
+window.addEventListener('mouseup', () =>
+{
+    cursor.down = false
+})
+
 
 // MESH ----------------------------------------------------------------------
 
-// Scene
+
+// Scene ----------------------------------------------------------------------
+
 const scene = new THREE.Scene()
 
-// Camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
-camera.position.z = 3
-scene.add(camera)
+// Vaiseau ----------------------------------------------------------------------
 
-// Vaiseau
 
 const vaisseau = new THREE.Object3D()
 scene.add(vaisseau)
 
- // Intérieur vaisseau 
+ // Intérieur vaisseau ----------------------------------------------------------------------
+
  
 
  const intVaisseau = new THREE.Mesh(
-    new THREE.BoxGeometry(1.5, 1, 1.5),
-    new THREE.MeshStandardMaterial({ metalness: 0.3, roughness: 0.8, color: 0xffcc99 })
+    new THREE.PlaneGeometry(10, 5, 2.5),
+    new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.8, color: 0xF8F8F8, side: THREE.DoubleSide }),
 )
-scene.add(intVaisseau)
+intVaisseau.rotation.y = Math.PI /1.9
+vaisseau.add(intVaisseau)
 
-// Renderer
+
+// Camera ----------------------------------------------------------------------
+
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
+camera.position.z = 6
+camera.position.x = 10
+camera.position.y = 10
+intVaisseau.add(camera)
+
+
+// Lights ----------------------------------------------------------------------
+
+const sunLight = new THREE.DirectionalLight(0xff0000 , 0.1)
+sunLight.position.x = 1
+sunLight.position.y = 1
+sunLight.position.z = 1
+sunLight.castShadow = true
+sunLight.shadow.camera.top = 1.20
+sunLight.shadow.camera.right = 1.20
+sunLight.shadow.camera.bottom = - 1.20
+sunLight.shadow.camera.left = - 1.20
+scene.add(sunLight)
+
+
+
+// Lampe création ----------------------------------------------------------------------
+
+const lampe = new THREE.PointLight(0xff0000, 0.5)
+lampe.position.z = 0.5
+intVaisseau.add(lampe)
+
+// Renderer ----------------------------------------------------------------------
 
 const renderer = new THREE.WebGLRenderer()
 renderer.setSize(sizes.width, sizes.height)
@@ -75,13 +114,20 @@ document.body.appendChild(renderer.domElement)
 const loop = () =>
 {
     window.requestAnimationFrame(loop)
+    
+    if(cursor.down){
 
-    // Update house
-    vaisseau.rotation.y += 0.003
+        lampe.position.x = cursor.x * 12
+        lampe.position.y= -cursor.y * 12
+    }
+
+    // Update vaisseau
+
+    // vaisseau.rotation.y += 0.003
 
     // Update camera
-    camera.position.x = cursor.x * 3
-    camera.position.y = - cursor.y * 3
+    camera.position.x = 0
+    camera.position.y = 0
     camera.lookAt(new THREE.Vector3())
 
     // Renderer
