@@ -1,4 +1,5 @@
 import './css/style.styl'
+import Vaisseau from './js/Vaisseau.js'
 
 import * as THREE from 'three'
 
@@ -47,7 +48,6 @@ window.addEventListener('mouseup', () =>
     cursor.down = false
 })
 
-
 // MESH ----------------------------------------------------------------------
 
 
@@ -55,23 +55,37 @@ window.addEventListener('mouseup', () =>
 
 const scene = new THREE.Scene()
 
+
 // Vaiseau ----------------------------------------------------------------------
 
+const vaisseau = new Vaisseau()
+scene.add(vaisseau.container)
+
+/*
 
 const vaisseau = new THREE.Object3D()
 scene.add(vaisseau)
 
  // Intérieur vaisseau ----------------------------------------------------------------------
 
- 
 
  const intVaisseau = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 5, 2.5),
-    new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.8, color: 0xF8F8F8, side: THREE.DoubleSide }),
+    new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.8, color: 0xF8F8F8, side: THREE.DoubleSide })
 )
-intVaisseau.rotation.y = Math.PI /1.9
 vaisseau.add(intVaisseau)
 
+const mur = new THREE.Mesh(
+    new THREE.PlaneGeometry(15, 10, 2.5),
+    new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.8, color: 0xF8F8F8, side: THREE.DoubleSide })
+)
+mur.position.y = 4
+mur.position.z = 3
+mur.rotation.x = 10
+
+
+vaisseau.add(mur)
+*/
 
 // Camera ----------------------------------------------------------------------
 
@@ -79,29 +93,27 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
 camera.position.z = 6
 camera.position.x = 10
 camera.position.y = 10
-intVaisseau.add(camera)
+vaisseau.container.add(camera)
 
 
 // Lights ----------------------------------------------------------------------
 
-const sunLight = new THREE.DirectionalLight(0xff0000 , 0.1)
+const sunLightt = new THREE.AmbientLight()
+scene.add(sunLightt)
+
+const sunLight = new THREE.DirectionalLight(0xffcccc, 0.6)
 sunLight.position.x = 1
 sunLight.position.y = 1
 sunLight.position.z = 1
-sunLight.castShadow = true
-sunLight.shadow.camera.top = 1.20
-sunLight.shadow.camera.right = 1.20
-sunLight.shadow.camera.bottom = - 1.20
-sunLight.shadow.camera.left = - 1.20
 scene.add(sunLight)
 
 
 
 // Lampe création ----------------------------------------------------------------------
 
-const lampe = new THREE.PointLight(0xff0000, 0.5)
+const lampe = new THREE.PointLight(0xff0000, 0.9)
 lampe.position.z = 0.5
-intVaisseau.add(lampe)
+vaisseau.container.add(lampe)
 
 // Renderer ----------------------------------------------------------------------
 
@@ -132,6 +144,7 @@ const loop = () =>
 
     // Renderer
     renderer.render(scene, camera)
+    //console.log(cursor.x, cursor.y)
 }
 loop()
 
