@@ -98,21 +98,24 @@ vaisseau.container.add(camera)
 
 // Lights ----------------------------------------------------------------------
 
+/*
 const sunLightt = new THREE.AmbientLight()
 scene.add(sunLightt)
 
-const sunLight = new THREE.DirectionalLight(0xffcccc, 0.6)
+const sunLight = new THREE.DirectionalLight(0xffcccc, 0.5)
 sunLight.position.x = 1
 sunLight.position.y = 1
 sunLight.position.z = 1
 scene.add(sunLight)
 
+*/
+
 
 
 // Lampe création ----------------------------------------------------------------------
 
-const lampe = new THREE.PointLight(0xff0000, 0.9)
-lampe.position.z = 0.5
+const lampe = new THREE.PointLight(0xffffff, 0.3)
+lampe.position.z = 1
 vaisseau.container.add(lampe)
 
 // Renderer ----------------------------------------------------------------------
@@ -129,8 +132,8 @@ const loop = () =>
     
     if(cursor.down){
 
-        lampe.position.x = cursor.x * 12
-        lampe.position.y= -cursor.y * 12
+        lampe.position.x = cursor.x * 18
+        lampe.position.y= -cursor.y * 10
     }
 
     // Update vaisseau
@@ -138,9 +141,11 @@ const loop = () =>
     // vaisseau.rotation.y += 0.003
 
     // Update camera
+    camera.position.x = 2
     camera.position.x = 0
-    camera.position.y = 0
+    camera.position.y = 1
     camera.lookAt(new THREE.Vector3())
+
 
     // Renderer
     renderer.render(scene, camera)
